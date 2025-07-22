@@ -1,0 +1,19 @@
+[project]
+name = "linkedinaiagent"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.116.1",
+    "langchain>=0.3.26",
+    "langchain-community>=0.3.27",
+    "langchain-groq>=0.3.6",
+    "langchain-tavily>=0.2.10",
+    "langgraph>=0.5.3",
+    "pygithub>=2.6.1",
+    "python-dotenv>=1.1.1",
+    "schedule>=1.2.2",
+    "tavily-python>=0.7.9",
+    "uvicorn>=0.35.0",
+]
