@@ -2,7 +2,6 @@ import os
 from dotenv import load_dotenv
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_groq import ChatGroq # type: ignore
-from langchain.agents import create_tool_calling_agent
 from tools.search_tool import get_search_tool
 
 load_dotenv()
@@ -12,7 +11,7 @@ def create_search_agent():
     tools = [get_search_tool()]
 
     llm = ChatGroq(
-        model="llama3-8b-8192",
+        model="llama3-70b-8192",
         temperature=0,
         api_key=os.getenv("GROQ_API_KEY")
     )
@@ -20,20 +19,22 @@ def create_search_agent():
 
     prompt = ChatPromptTemplate.from_messages([
         ("system", """
-         You are an expert research analyst. Your mission is to provide the most
-         accurate, relevant, and up-to-date information on a given topic.
-         
-         - Use your search tool to find information.
-         - Synthesize the search results into a concise, easy-to-read summary.
-         - Focus on key points, recent developments, and interesting facts.
-         - If you have enough information to answer, provide the summary directly.
-           Otherwise, you must call the search tool to get the information.
-         """),
-        ("human", "{input}"),
-        ("placeholder", "{agent_scratchpad}"), 
+        You are an expert research analyst and content creator for LinkedIn.
+        Your mission is to answer a user's query by searching the web for the
+        most accurate and up-to-date information.
+
+        - Use your search tool to find information on the requested topic.
+        - After gathering the information, synthesize it into a concise,
+          engaging, and insightful LinkedIn post.
+        
+        IMPORTANT: Your final output MUST be only the text of the LinkedIn post itself.
+        Do not include any introductory phrases, conversational text, or explanations
+        like "Here is the post:".
+        """),
+        ("placeholder", "{messages}"),
     ])
 
-    agent = create_tool_calling_agent(llm, tools, prompt)
+    agent = prompt | llm.bind_tools(tools)
     
     print("--- Research Agent Created ---")
     return agent
